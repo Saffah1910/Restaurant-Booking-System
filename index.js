@@ -3,17 +3,22 @@ import { engine } from 'express-handlebars';
 import bodyParser from "body-parser";
 import flash from "flash-express";
 import session from "express-session";
-import pgp from "pg-promise";
+import pgPromise from "pg-promise";
 import exphbs from "express-handlebars";
+import 'dotenv/config';
 
 //import db query
 import restaurant from "./services/restaurant.js";
 //create instance for query
-const query = restaurant();
+//dotenv.config();
 
 //use pgppromise to cnnect to the databse
 const connectionString = process.env.DATABASE_URL;
+console.log(connectionString);
+const pgp = pgPromise({});
+
 const db = pgp(connectionString);
+const query = restaurant();
 
 const app = express();
 
@@ -48,8 +53,8 @@ app.get("/", (req, res) => {
 });
 
 //this will show all bookings that have been made
-app.get("/bookings", (req, res) => {
-    query.getBookedTables()
+app.get("/bookings", async (req, res) => {
+  await  query.getBookedTables()
     res.render('bookings', { tables: [{}, {}, {}, {}, {}, {}] })
 });
 

@@ -1,13 +1,27 @@
 import express from "express";
-import pgp from "pg-promise";
-import exphbs from "express-handlebars";
+import { engine } from 'express-handlebars';
 import bodyParser from "body-parser";
 import flash from "flash-express";
+import session from "express-session";
+import pgp from "pg-promise";
+import exphbs from "express-handlebars";
 
-const app = express()
+//import db query
+
+//use pgppromise to cnnect to the databse
+const connectionString = process.env.DATABASE_URL;
+const db = pgp(connectionString);
+
+const app = express();
 
 app.use(express.static('public'));
 app.use(flash());
+
+app.use(session({
+    secret: 'your-secret-key',
+    resave: false,
+    saveUninitialized: false
+}));
 
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
@@ -21,15 +35,42 @@ const handlebarSetup = exphbs.engine({
 app.engine('handlebars', handlebarSetup);
 app.set('view engine', 'handlebars');
 
+
+//home routes allows user to book will also contain req flash for error messages
 app.get("/", (req, res) => {
 
     res.render('index', { tables : [{}, {}, {booked : true}, {}, {}, {}]})
 });
 
-
+//this will show all bookings that have been made
 app.get("/bookings", (req, res) => {
     res.render('bookings', { tables : [{}, {}, {}, {}, {}, {}]})
 });
+
+//should be able to book an avialable table, should book if its too mnay people and show error message, redirect back to home page
+app.post("/book",(req, res) => {
+
+res.redirect("/")
+});
+
+//this will show al the bookigs for a sepacif user
+app.get("/bookings/:username",(req,res)=> {
+
+});
+
+//allows the admin to cancel booking
+app.post("/cancel", (req,res) => {
+
+
+    res.redirect('/bookings')
+
+});
+
+
+
+
+
+
 
 
 var portNumber = process.env.PORT || 3000;

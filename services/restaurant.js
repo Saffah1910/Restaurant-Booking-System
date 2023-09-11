@@ -51,7 +51,7 @@ const restaurant = (db) => {
     async function getBookedTables() {
         // get all the booked tables
 
-        
+
     }
     async function isTableBooked(tableName) {
        
@@ -59,9 +59,12 @@ const restaurant = (db) => {
             const result = await db.oneOrNone('SELECT booked FROM table_booking WHERE table_name = $1', tableName);
     
             // If a row was found, return the booking status (true or false)
-            if (result.booked) {
+            if (!result.booked) {
                 return true;
-            } 
+            }else{
+                return false
+            }
+            
     }
     
 

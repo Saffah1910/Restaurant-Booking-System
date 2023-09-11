@@ -7,6 +7,9 @@ import pgp from "pg-promise";
 import exphbs from "express-handlebars";
 
 //import db query
+import restaurant from "./services/restaurant.js";
+//create instance for query
+const query = restaurant();
 
 //use pgppromise to cnnect to the databse
 const connectionString = process.env.DATABASE_URL;
@@ -36,30 +39,53 @@ app.engine('handlebars', handlebarSetup);
 app.set('view engine', 'handlebars');
 
 
+
+
 //home routes allows user to book will also contain req flash for error messages
 app.get("/", (req, res) => {
 
-    res.render('index', { tables : [{}, {}, {booked : true}, {}, {}, {}]})
+    res.render('index', { tables: [{}, {}, { booked: true }, {}, {}, {}] })
 });
 
 //this will show all bookings that have been made
 app.get("/bookings", (req, res) => {
-    res.render('bookings', { tables : [{}, {}, {}, {}, {}, {}]})
+    query.getBookedTables()
+    res.render('bookings', { tables: [{}, {}, {}, {}, {}, {}] })
 });
 
 //should be able to book an avialable table, should book if its too mnay people and show error message, redirect back to home page
-app.post("/book",(req, res) => {
+// app.post("/book", (req, res) => {
+//     let table_name = req.body.tableNmae;
+//     query.bookTable({
+//         table_name,
+//         username,
+//         phoneNumber,
+//         seats
+//     });
 
-res.redirect("/")
+
+// });
+
+
+
+app.post('/book', async (req, res) => {
+    const { tableId, booking_size, username, phone_number } = req.body;
+  
+    const result = await query.bookTable({
+      tableName: tableId,
+      username,
+      phoneNumber: phone_number,
+      seats: booking_size,
+    });
 });
 
 //this will show al the bookigs for a sepacif user
-app.get("/bookings/:username",(req,res)=> {
+app.get("/bookings/:username", (req, res) => {
 
 });
 
 //allows the admin to cancel booking
-app.post("/cancel", (req,res) => {
+app.post("/cancel", (req, res) => {
 
 
     res.redirect('/bookings')

@@ -55,15 +55,21 @@ const restaurant = (db) => {
     }
     async function isTableBooked(tableName) {
        
-            // Query the database to check if the specified table is booked
-            const result = await db.oneOrNone('SELECT booked FROM table_booking WHERE table_name = $1', tableName);
+            // // Query the database to check if the specified table is booked
+            // const result = await db.oneOrNone('SELECT booked FROM table_booking WHERE table_name = $1', tableName);
     
-            // If a row was found, return the booking status (true or false)
-            if (!result.booked) {
-                return true;
-            }else{
-                return false
-            }
+            // // If a row was found, return the booking status (true or false)
+            // if (!result.booked) {
+            //     return true;
+            // }else{
+            //     return false
+            // }
+
+       
+                let bookedStatus = await db.oneOrNone("SELECT booked FROM table_booking WHERE table_name = $1", [tableName]);
+                       return bookedStatus.booked;
+               
+               
             
     }
     

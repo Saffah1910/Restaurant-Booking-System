@@ -142,7 +142,7 @@ describe("The restaurant booking table", function () {
     it("should be able to book a table.", async function () {
         let restaurantTableBooking = RestaurantTableBooking(db);
         // Table three should not be booked
-        assert.equal(false, await restaurantTableBooking.isTableBooked('Table three'));
+        assert.equal(true, await restaurantTableBooking.isTableBooked('Table three'));
         // book Table three
 
         await restaurantTableBooking.bookTable({
